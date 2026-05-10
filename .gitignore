@@ -1,11 +1,4 @@
-# Xcode
+*.xcodeproj
 *.xcworkspace
-xcuserdata/
-*.xcodeproj/project.xcworkspace
-*.xcodeproj/xcuserdata
-
-# Swift Package Manager
-.build/
-
-# macOS
+build/
 .DS_Store
