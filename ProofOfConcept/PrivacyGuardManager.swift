@@ -3,7 +3,7 @@ import Vision
 import UIKit
 
 class PrivacyGuardManager {
-    static let shared = PrivacyGuardManager()
+    @MainActor static let shared = PrivacyGuardManager()
     
     private var isActive = false
     private var currentFaceCount = 1
