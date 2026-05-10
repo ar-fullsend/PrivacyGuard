@@ -24,7 +24,7 @@ jobs:
       run: |
         SWIFT_TARGET="arm64-apple-ios18.0-simulator"
         IPHONE_SIM_SDK="$(xcrun --sdk iphonesimulator --show-sdk-path)"
-        swift test --target PrivacyGuard \
+        swift test \
           -Xswiftc "-target" -Xswiftc "$SWIFT_TARGET" \
           -Xswiftc "-sdk" -Xswiftc "$IPHONE_SIM_SDK" \
           -Xcc "-isysroot" -Xcc "$IPHONE_SIM_SDK" \
