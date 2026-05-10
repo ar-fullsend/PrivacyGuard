@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PrivacyGuard - Live Demo</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600&amp;display=swap');
         body { 
             font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif; 
             background: #000; 
@@ -17,18 +16,30 @@
             align-items: center; 
             min-height: 100vh;
         }
-        .header { text-align: center; margin-bottom: 30px; }
+        .header { text-align: center; margin-bottom: 20px; }
         .header h1 { color: #007AFF; font-size: 42px; margin: 0; }
         .header p { color: #888; margin: 8px 0 0; }
+        .env-banner {
+            max-width: 420px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #ccc;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            margin-bottom: 18px;
+            text-align: center;
+        }
+        .env-banner.ok { border-color: #0A0; color: #6f6; }
+        .env-banner.warn { border-color: #FFA500; color: #FFA500; }
         .phone-frame {
             width: 380px;
-            height: 780px;
+            height: 720px;
             background: #111;
             border-radius: 60px;
             padding: 12px;
             box-shadow: 0 0 60px rgba(0, 122, 255, 0.4), inset 0 0 20px rgba(255,255,255,0.1);
             position: relative;
-            overflow: hidden;
         }
         .phone-frame::before {
             content: '';
@@ -55,19 +66,51 @@
             height: 100%;
             object-fit: cover;
             background: #1a1a1a;
+            display: block;
+        }
+        .sim-bg {
+            position: absolute; inset: 0;
+            background:
+                radial-gradient(circle at 30% 35%, rgba(255,200,160,0.25), transparent 40%),
+                radial-gradient(circle at 70% 60%, rgba(100,150,255,0.15), transparent 50%),
+                linear-gradient(135deg, #1c1c20, #0a0a0e);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            color: #555;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+        .sim-bg.show { display: flex; }
+        .sim-face {
+            width: 140px; height: 180px;
+            border-radius: 50%;
+            background: radial-gradient(ellipse at 50% 40%, #c9a187, #6e4a37 70%, #2a1a14);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+            opacity: 0.85;
         }
         .overlay {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             pointer-events: none;
             transition: all 0.2s ease;
         }
         .shield-active {
-            background: rgba(0,0,0,0.85);
+            background: rgba(0,0,0,0.88);
             backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .shield-active::after {
+            content: '🔒  Screen Shielded';
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 600;
+            font-size: 18px;
+            letter-spacing: 0.5px;
         }
         .face-overlay {
             position: absolute;
@@ -77,37 +120,41 @@
             box-shadow: 0 0 20px #00FF9F;
             transition: all 0.1s ease;
         }
-        .warning { color: #FF3B30; font-weight: 600; }
+        .face-overlay.intruder {
+            border-color: #FF3B30;
+            box-shadow: 0 0 22px #FF3B30;
+        }
         .stats {
-            margin-top: 30px;
+            margin-top: 20px;
             background: #111;
             border-radius: 16px;
-            padding: 20px;
+            padding: 18px 20px;
             width: 380px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
         .stat-row {
             display: flex;
             justify-content: space-between;
-            margin: 12px 0;
+            margin: 10px 0;
             font-size: 15px;
         }
         .stat-label { color: #888; }
         .stat-value { color: #007AFF; font-weight: 600; }
         .controls {
-            margin-top: 20px;
+            margin-top: 18px;
             display: flex;
             gap: 12px;
             flex-wrap: wrap;
             justify-content: center;
+            max-width: 420px;
         }
         button {
-            padding: 14px 28px;
+            padding: 14px 22px;
             background: #007AFF;
             color: white;
             border: none;
             border-radius: 14px;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -117,17 +164,30 @@
         button.secondary:hover { background: #444; }
         .status-bar {
             position: absolute;
-            top: 40px;
+            top: 60px;
             left: 0;
             right: 0;
-            height: 30px;
-            background: rgba(0,0,0,0.6);
+            height: 26px;
+            background: rgba(0,0,0,0.55);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 13px;
+            font-size: 12px;
             z-index: 5;
             color: #0A0;
+        }
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #111;
+            padding: 10px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            z-index: 100;
+            border: 1px solid #222;
         }
     </style>
 </head>
@@ -137,9 +197,14 @@
         <p><strong>Your screen. Yours alone.</strong> — Live Demo</p>
     </div>
 
+    <div id="env-banner" class="env-banner">Checking environment…</div>
+
     <div class="phone-frame">
         <div class="screen">
-            <video id="camera" autoplay playsinline></video>
+            <video id="camera" autoplay playsinline muted></video>
+            <div id="sim-bg" class="sim-bg">
+                <div class="sim-face"></div>
+            </div>
             <div id="overlay" class="overlay"></div>
             <div class="status-bar">🔒 PrivacyGuard Active</div>
             <div id="face-indicators"></div>
@@ -148,7 +213,7 @@
 
     <div class="stats">
         <div class="stat-row"><span class="stat-label">Faces Detected</span> <span id="face-count" class="stat-value">1</span></div>
-        <div class="stat-row"><span class="stat-label">Response Time</span> <span id="latency" class="stat-value">&lt;120ms</span></div>
+        <div class="stat-row"><span class="stat-label">Response Time</span> <span id="latency" class="stat-value"><120ms</span></div>
         <div class="stat-row"><span class="stat-label">Shield Status</span> <span id="shield-status" class="stat-value" style="color:#0A0">Inactive</span></div>
         <div class="stat-row"><span class="stat-label">Power Impact</span> <span id="power" class="stat-value">0.8%</span></div>
     </div>
@@ -161,59 +226,93 @@
 
     <script>
         let videoStream = null;
-        let isShielded = false;
-        let faceCount = 1;
         let secondFaceActive = false;
+        let usingSimulation = false;
 
-        async function startCamera() {
-            try {
-                const video = document.getElementById('camera');
-                videoStream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: 'user', width: 380, height: 620 } 
-                });
-                video.srcObject = videoStream;
-                updateStatus('✅ TrueDepth camera active — 1 face detected');
-                
-                // Simulate initial face detection overlay
-                addFaceOverlay(120, 180, 90);
-                
-                // Random face movement simulation
-                setInterval(() => {
-                    if (!secondFaceActive && Math.random() > 0.7) {
-                        moveFaceOverlays();
-                    }
-                }, 1500);
-            } catch (err) {
-                alert('Camera access required for full demo. Using simulated view.');
-                simulateCamera();
+        // --- Environment check on load ---
+        function checkEnvironment() {
+            const banner = document.getElementById('env-banner');
+            const isSecure = window.isSecureContext;
+            const inIframe = window.self !== window.top;
+            const hasMedia = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+
+            if (!hasMedia) {
+                banner.className = 'env-banner warn';
+                banner.innerHTML = '⚠️ This browser does not expose <code>getUserMedia</code>. Demo will use simulation.';
+            } else if (!isSecure) {
+                banner.className = 'env-banner warn';
+                banner.innerHTML = '⚠️ Insecure context — camera blocked. Open via <code>https://</code> or <code>localhost</code>.';
+            } else if (inIframe) {
+                banner.className = 'env-banner warn';
+                banner.innerHTML = '⚠️ Running inside a sandboxed frame. Camera may be blocked by the host. Open this file directly to use the live camera.';
+            } else {
+                banner.className = 'env-banner ok';
+                banner.textContent = '✅ Environment OK — tap Start Camera to enable live view';
             }
         }
 
-        function simulateCamera() {
+        async function startCamera() {
             const video = document.getElementById('camera');
-            video.style.background = 'linear-gradient(45deg, #1a1a1a, #2a2a2a)';
-            video.poster = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iNjIwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMTExIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZpbGw9IiM2NjYiIGZvbnQtc2l6ZT0iMjQiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkNhbWVyYSBTaW11bGF0ZWQ8L3RleHQ+PC9zdmc+';
-            addFaceOverlay(140, 200, 85);
+            const simBg = document.getElementById('sim-bg');
+
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                toast('Camera API unavailable — using simulation');
+                useSimulation();
+                return;
+            }
+
+            try {
+                videoStream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'user' },
+                    audio: false
+                });
+                video.srcObject = videoStream;
+                video.style.display = 'block';
+                simBg.classList.remove('show');
+                usingSimulation = false;
+                toast('✅ Camera active — TrueDepth simulation running');
+                addFaceOverlay(120, 200, 100, false);
+            } catch (err) {
+                console.error('Camera error:', err);
+                let reason = err.name || 'Unknown error';
+                let hint = '';
+                if (err.name === 'NotAllowedError') hint = 'Permission denied. Check your browser/site camera permissions.';
+                else if (err.name === 'NotFoundError') hint = 'No camera found on this device.';
+                else if (err.name === 'NotReadableError') hint = 'Camera is in use by another app.';
+                else if (err.name === 'SecurityError') hint = 'Blocked by security policy (likely sandboxed iframe — open file directly).';
+                else hint = err.message || '';
+                toast(`Camera blocked: ${reason}. ${hint}`);
+                useSimulation();
+            }
         }
 
-        function addFaceOverlay(x, y, size) {
+        function useSimulation() {
+            usingSimulation = true;
+            const video = document.getElementById('camera');
+            const simBg = document.getElementById('sim-bg');
+            video.style.display = 'none';
+            simBg.classList.add('show');
+            addFaceOverlay(120, 200, 100, false);
+        }
+
+        function addFaceOverlay(x, y, size, intruder) {
             const container = document.getElementById('face-indicators');
             const overlay = document.createElement('div');
-            overlay.className = 'face-overlay';
+            overlay.className = 'face-overlay' + (intruder ? ' intruder' : '');
             overlay.style.left = x + 'px';
             overlay.style.top = y + 'px';
             overlay.style.width = size + 'px';
             overlay.style.height = size + 'px';
+            overlay.dataset.role = intruder ? 'intruder' : 'owner';
             container.appendChild(overlay);
-            setTimeout(() => overlay.remove(), 4000);
+            return overlay;
         }
 
-        function moveFaceOverlays() {
+        function clearOverlays(role) {
             const container = document.getElementById('face-indicators');
-            container.innerHTML = '';
-            const x = 80 + Math.random() * 180;
-            const y = 120 + Math.random() * 300;
-            addFaceOverlay(x, y, 70 + Math.random() * 40);
+            [...container.children].forEach(el => {
+                if (!role || el.dataset.role === role) el.remove();
+            });
         }
 
         function simulateSecondFace() {
@@ -223,61 +322,40 @@
             const latencyEl = document.getElementById('latency');
 
             if (secondFaceActive) {
-                // Remove second face
                 secondFaceActive = false;
-                faceCount = 1;
-                faceCountEl.textContent = faceCount;
+                faceCountEl.textContent = '1';
                 overlay.classList.remove('shield-active');
                 status.textContent = 'Inactive';
                 status.style.color = '#0A0';
-                updateStatus('✅ Second face left — Screen restored');
-                document.getElementById('face-indicators').innerHTML = '';
-                addFaceOverlay(120, 180, 90);
+                clearOverlays('intruder');
+                toast('✅ Second face left — screen restored');
                 return;
             }
 
-            // Add second face
             secondFaceActive = true;
-            faceCount = 2;
-            faceCountEl.textContent = faceCount;
+            faceCountEl.textContent = '2';
             latencyEl.textContent = '87ms';
-            
-            updateStatus('⚠️ Second face detected — Shielding screen');
             overlay.classList.add('shield-active');
             status.textContent = 'ACTIVE';
             status.style.color = '#FF3B30';
-
-            // Add second face indicator
-            addFaceOverlay(220, 280, 75);
-            
-            // Simulate shield animation
-            setTimeout(() => {
-                if (secondFaceActive) {
-                    updateStatus('🔒 Screen shielded — Privacy protected');
-                }
-            }, 600);
+            addFaceOverlay(230, 320, 80, true);
+            toast('⚠️ Second face detected — shielding screen');
         }
 
-        function updateStatus(msg) {
-            const statusEl = document.createElement('div');
-            statusEl.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#111;padding:10px 20px;border-radius:20px;font-size:14px;box-shadow:0 4px 15px rgba(0,0,0,0.5);z-index:100;';
-            statusEl.textContent = msg;
-            document.body.appendChild(statusEl);
-            setTimeout(() => statusEl.remove(), 2200);
+        function toast(msg) {
+            const el = document.createElement('div');
+            el.className = 'toast';
+            el.textContent = msg;
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 2400);
         }
 
         function resetDemo() {
+            if (videoStream) videoStream.getTracks().forEach(t => t.stop());
             location.reload();
         }
 
-        // Auto-start hint
-        window.onload = function() {
-            const hint = document.createElement('div');
-            hint.style.cssText = 'position:absolute;bottom:80px;left:50%;transform:translateX(-50%);color:#666;font-size:13px;';
-            hint.textContent = 'Tap Start Camera for live TrueDepth simulation';
-            document.body.appendChild(hint);
-            setTimeout(() => hint.remove(), 4500);
-        }
+        window.addEventListener('load', checkEnvironment);
     </script>
 </body>
 </html>
