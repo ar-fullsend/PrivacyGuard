@@ -5,19 +5,19 @@ import UIKit
 class VisionDetector {
     private let faceDetectionRequest = VNDetectFaceRectanglesRequest()
     
-    func detectFaces(in pixelBuffer: CVPixelBuffer, completion: @escaping (Int) -> Void) {
+    func detectFaces(in pixelBuffer: CVPixelBuffer) -> Int {
         let handler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, options: [:])
         
         do {
             try handler.perform([faceDetectionRequest])
             if let results = faceDetectionRequest.results {
-                completion(results.count)
+                return results.count
             } else {
-                completion(0)
+                return 0
             }
         } catch {
             print("Vision error: \(error)")
-            completion(0)
+            return 0
         }
     }
 }

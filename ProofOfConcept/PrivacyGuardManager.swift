@@ -2,7 +2,6 @@ import Foundation
 import Vision
 import UIKit
 
-@MainActor
 class PrivacyGuardManager {
     static let shared = PrivacyGuardManager()
     
@@ -17,16 +16,19 @@ class PrivacyGuardManager {
         sensor?.delegate = self
     }
     
+    @MainActor
     func startMonitoring() {
         isActive = true
         sensor?.start()
     }
     
+    @MainActor
     func stopMonitoring() {
         isActive = false
         sensor?.stop()
     }
     
+    @MainActor
     private func handleFaceCount(_ count: Int) {
         currentFaceCount = count
         if count > 1 {
@@ -39,10 +41,10 @@ class PrivacyGuardManager {
 
 extension PrivacyGuardManager: TrueDepthSensorDelegate {
     nonisolated func didCaptureFrame(pixelBuffer: CVPixelBuffer) {
-        Task { @MainActor in
-            await self.visionDetector?.detectFaces(in: pixelBuffer) { [weak self] faceCount in
-                self?.handleFaceCount(faceCount)
-            }
+        guard let visionDetector = visionDetector else { return }
+        let faceCount = visionDetector.detectFaces(in: pixelBuffer)
+        Task { @MainActor [weak self] in
+            self?.handleFaceCount(faceCount)
         }
     }
 }
