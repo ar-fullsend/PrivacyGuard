@@ -2,14 +2,16 @@ import XCTest
 @testable import PrivacyGuard
 
 final class PrivacyGuardTests: XCTestCase {
+    @MainActor
     func testPrivacyGuardManagerExists() throws {
-        // Verify the main manager is accessible
+        // Verify the main manager is accessible and functional
         let manager = PrivacyGuardManager.shared
-        XCTAssertNotNil(manager)
+        manager.startMonitoring()
+        manager.stopMonitoring()
     }
     
+    @MainActor
     func testExample() throws {
-        // Simple passing test
-        XCTAssertTrue(true, "Basic test should pass")
+        // Placeholder test exercising main actor context
     }
 }
