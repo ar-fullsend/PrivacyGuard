@@ -36,9 +36,9 @@ The screen is the new front door. And right now, anyone walking past can step in
 | ❌ Each app needs integration | ✅ Works with every app |
 
 ## Implementation Path
-- **iOS 19**: Settings toggle + PrivacyKit API
-- **iOS 19.x**: Developer API for apps
-- **iOS 20**: Default system-wide
+- **iOS 18+**: Full Swift Package with TrueDepth + Vision integration (COMPLETE)
+- **iOS 19**: Settings toggle + PrivacyKit API (Phase 2)
+- **iOS 20**: Default system-wide (Phase 3)
 
 ## The Ask
 Make iOS the first platform where your screen sees only you.
@@ -54,12 +54,30 @@ open Package.swift
 
 ## Repo Structure
 - `/Assets/` — Pitch images
-- `Package.swift` — Swift Package manifest at root (library target sourcing ProofOfConcept)
-- `/ProofOfConcept/` — Real Swift implementation (TrueDepth + Vision)
+- `Package.swift` — Swift Package manifest at root (library + demo target)
+- `/ProofOfConcept/` — Real Swift implementation (TrueDepth + Vision + ShieldOverlay with UIWindow demo)
 - `/web-demo/` — Interactive browser simulation
+- `PrivacyGuard.entitlements` — Camera and sandbox permissions
+- `ProofOfConcept/PrivacyInfo.xcprivacy` — Privacy manifest
+- `.github/workflows/ci.yml` — Swift CI
+- `/Demo/` — Sample SwiftUI demo app
 
-**Status**: Prototype-ready. Ready for testing on device.
+**Status**: Phase 1 Complete — Prototype-ready with full wiring, entitlements, privacy manifest, CI, and demo. Ready for Xcode integration and device testing on Mac/Cloud Mac.
+
+**Phase 2**: Xcode project setup, background capabilities, real-device testing.
+
+**Phase 3**: Pitch deck polish, video demo, Apple submission.
 
 **Contributing**: Issues and PRs welcome.
 
 **License**: MIT
+
+## Completed Recommendations
+- ✅ Wired PrivacyGuardManager, TrueDepthSensor, VisionDetector, ShieldOverlay
+- ✅ Added entitlements and PrivacyInfo.xcprivacy
+- ✅ Added CI workflow for build/test
+- ✅ Enhanced ShieldOverlay with UIWindow overlay simulation
+- ✅ Added Demo app target and sample SwiftUI view
+- ✅ Updated documentation and roadmap
+
+For full iOS app, open in Xcode on Mac, add app target using the package, and configure Info.plist with NSFaceIDUsageDescription and NSCameraUsageDescription.
