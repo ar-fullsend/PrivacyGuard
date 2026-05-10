@@ -43,8 +43,8 @@ extension PrivacyGuardManager: TrueDepthSensorDelegate {
     nonisolated func didCaptureFrame(pixelBuffer: CVPixelBuffer) {
         guard let visionDetector = visionDetector else { return }
         let faceCount = visionDetector.detectFaces(in: pixelBuffer)
-        Task { @MainActor [weak self] in
-            self?.handleFaceCount(faceCount)
+        Task { @MainActor in
+            PrivacyGuardManager.shared.handleFaceCount(faceCount)
         }
     }
 }
