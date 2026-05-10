@@ -2,8 +2,8 @@ import Foundation
 import Vision
 import UIKit
 
-class PrivacyGuardManager {
-    @MainActor static let shared = PrivacyGuardManager()
+public class PrivacyGuardManager {
+    @MainActor public static let shared = PrivacyGuardManager()
     
     private var isActive = false
     private var currentFaceCount = 1
@@ -17,13 +17,13 @@ class PrivacyGuardManager {
     }
     
     @MainActor
-    func startMonitoring() {
+    public func startMonitoring() {
         isActive = true
         sensor?.start()
     }
     
     @MainActor
-    func stopMonitoring() {
+    public func stopMonitoring() {
         isActive = false
         sensor?.stop()
     }
