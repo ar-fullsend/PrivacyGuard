@@ -1,58 +1,48 @@
-// PrivacyGuardManager.swift
-// Main orchestrator for PrivacyGuard
-
 import Foundation
-import AVFoundation
 import Vision
+import UIKit
 
+@MainActor
 class PrivacyGuardManager {
     static let shared = PrivacyGuardManager()
+    
     private var isActive = false
     private var currentFaceCount = 1
+    private var sensor: TrueDepthSensor?
+    private var visionDetector: VisionDetector?
     
-    private let sensor = TrueDepthSensor()
-    private let detector = VisionDetector()
+    private init() {
+        sensor = TrueDepthSensor()
+        visionDetector = VisionDetector()
+        sensor?.delegate = self
+    }
     
     func startMonitoring() {
         isActive = true
-        print("PrivacyGuard: Monitoring started")
-        if sensor.configureSession() {
-            sensor.onFrameCaptured = { [weak self] pixelBuffer in
-                guard let self = self, self.isActive else { return }
-                self.detector.detectFaces(in: pixelBuffer) { [weak self] count in
-                    guard let self = self, self.isActive else { return }
-                    if count != self.currentFaceCount {
-                        self.currentFaceCount = count
-                        self.handleFaceCountChange(count)
-                    }
-                }
-            }
-            sensor.start()
-        } else {
-            print("PrivacyGuard: Failed to configure TrueDepth sensor")
-        }
+        sensor?.start()
     }
     
     func stopMonitoring() {
         isActive = false
-        sensor.stop()
-        print("PrivacyGuard: Monitoring stopped")
+        sensor?.stop()
     }
     
-    // Callback for face detection change
-    func handleFaceCountChange(_ count: Int) {
+    private func handleFaceCount(_ count: Int) {
+        currentFaceCount = count
         if count > 1 {
-            triggerShield()
+            ShieldOverlay.activate()
         } else {
-            restoreScreen()
+            ShieldOverlay.deactivate()
         }
     }
-    
-    private func triggerShield() {
-        ShieldOverlay.activate()
-    }
-    
-    private func restoreScreen() {
-        ShieldOverlay.deactivate()
+}
+
+extension PrivacyGuardManager: TrueDepthSensorDelegate {
+    nonisolated func didCaptureFrame(pixelBuffer: CVPixelBuffer) {
+        Task { @MainActor in
+            await self.visionDetector?.detectFaces(in: pixelBuffer) { [weak self] faceCount in
+                self?.handleFaceCount(faceCount)
+            }
+        }
     }
 }

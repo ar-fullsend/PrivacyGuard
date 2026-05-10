@@ -1,9 +1,6 @@
-// ShieldOverlay.swift
-// PrivacyGuard - System-wide shield implementation
-
-import SwiftUI
 import UIKit
 
+@MainActor
 class ShieldOverlay {
     private static var overlayWindow: UIWindow?
     
