@@ -13,11 +13,19 @@ jobs:
     - uses: actions/checkout@v4
     - name: Build
       run: |
+        SWIFT_TARGET="arm64-apple-ios18.0-simulator"
+        IPHONE_SIM_SDK="$(xcrun --sdk iphonesimulator --show-sdk-path)"
         swift build --target PrivacyGuard \
-          -Xswiftc "-target" -Xswiftc "arm64-apple-ios18.0-simulator" \
-          -Xswiftc "-sdk" -Xswiftc "$(xcrun --sdk iphonesimulator --show-sdk-path)"
+          -Xswiftc "-target" -Xswiftc "$SWIFT_TARGET" \
+          -Xswiftc "-sdk" -Xswiftc "$IPHONE_SIM_SDK" \
+          -Xcc "-isysroot" -Xcc "$IPHONE_SIM_SDK" \
+          -Xcc "-target" -Xcc "$SWIFT_TARGET"
     - name: Test
       run: |
+        SWIFT_TARGET="arm64-apple-ios18.0-simulator"
+        IPHONE_SIM_SDK="$(xcrun --sdk iphonesimulator --show-sdk-path)"
         swift test --target PrivacyGuard \
-          -Xswiftc "-target" -Xswiftc "arm64-apple-ios18.0-simulator" \
-          -Xswiftc "-sdk" -Xswiftc "$(xcrun --sdk iphonesimulator --show-sdk-path)"
+          -Xswiftc "-target" -Xswiftc "$SWIFT_TARGET" \
+          -Xswiftc "-sdk" -Xswiftc "$IPHONE_SIM_SDK" \
+          -Xcc "-isysroot" -Xcc "$IPHONE_SIM_SDK" \
+          -Xcc "-target" -Xcc "$SWIFT_TARGET"
