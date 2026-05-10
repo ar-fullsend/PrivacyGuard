@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrivacyGuard Demo</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; text-align: center; background: #000; color: #fff; padding: 40px 20px; margin: 0; }
+        h1 { color: #007AFF; }
+        .demo { max-width: 380px; margin: 30px auto; border: 12px solid #111; border-radius: 60px; overflow: hidden; box-shadow: 0 0 40px rgba(0,122,255,0.3); position: relative; }
+        .screen { height: 620px; background: linear-gradient(145deg, #1a1a1a, #0f0f0f); display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 500; transition: all 0.15s ease; position: relative; }
+        .shield { background: #000 !important; filter: brightness(0.1); }
+        .status { margin: 20px; padding: 12px; background: rgba(255,255,255,0.1); border-radius: 12px; min-height: 80px; }
+        button { padding: 14px 32px; margin: 8px; background: #007AFF; color: white; border: none; border-radius: 12px; font-size: 17px; font-weight: 600; cursor: pointer; }
+        button:hover { background: #0066CC; }
+    </style>
+</head>
+<body>
+    <h1>PrivacyGuard</h1>
+    <p><strong>Your screen. Yours alone.</strong></p>
+    
+    <div class="demo">
+        <div id="screen" class="screen">
+            <div>Your Private Content</div>
+        </div>
+    </div>
+
+    <div class="status" id="status">Ready — One face detected</div>
+
+    <button onclick="startDemo()">▶️ Start Simulation</button>
+    <button onclick="resetDemo()">Reset</button>
+
+    <script>
+        function startDemo() {
+            const screen = document.getElementById('screen');
+            const status = document.getElementById('status');
+            
+            status.innerHTML = '✅ Sensing with TrueDepth...';
+            
+            setTimeout(() => {
+                status.innerHTML = '⚠️ Second face detected! Shielding...';
+                screen.classList.add('shield');
+            }, 800);
+            
+            setTimeout(() => {
+                status.innerHTML = '✅ Second face left — Restoring screen';
+                screen.classList.remove('shield');
+            }, 3200);
+            
+            setTimeout(() => {
+                status.innerHTML = '✅ Back to private. PrivacyGuard active.';
+            }, 4200);
+        }
+        
+        function resetDemo() {
+            location.reload();
+        }
+    </script>
+</body>
+</html>
