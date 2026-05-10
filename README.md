@@ -7,9 +7,11 @@
 A native iOS privacy layer for the age of public screens. Built on TrueDepth.
 
 ## Pitch Deck
-![Pitch Slide 1](Assets/pitch-slide-1.png)
-![Pitch Slide 2](Assets/pitch-slide-2.png)
-![Pitch Slide 3](Assets/pitch-slide-3.png)
+## Pitch Deck
+
+![Slide 1](https://github.com/ar-fullsend/PrivacyGuard/raw/main/Assets/IMG_7019.jpeg)
+![Slide 2](https://github.com/ar-fullsend/PrivacyGuard/raw/main/Assets/IMG_7020.jpeg)
+![Slide 3](https://github.com/ar-fullsend/PrivacyGuard/raw/main/Assets/IMG_7021.jpeg)
 
 ## The Problem
 The screen is the new front door. And right now, anyone walking past can step inside.
