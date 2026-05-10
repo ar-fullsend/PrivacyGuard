@@ -7,7 +7,6 @@
 A native iOS privacy layer for the age of public screens. Built on TrueDepth.
 
 ## Pitch Deck
-## Pitch Deck
 
 ![Slide 1](https://github.com/ar-fullsend/PrivacyGuard/raw/main/Assets/IMG_7019.jpeg)
 ![Slide 2](https://github.com/ar-fullsend/PrivacyGuard/raw/main/Assets/IMG_7020.jpeg)
