@@ -1,7 +1,5 @@
 # PrivacyGuard
 
-![PrivacyGuard Logo](https://via.placeholder.com/800x200/000/fff?text=PrivacyGuard)
-
 **Your screen. Yours alone.**
 
 A native iOS privacy layer for the age of public screens. Built on TrueDepth.
@@ -56,9 +54,9 @@ open Package.swift
 
 ## Repo Structure
 - `/Assets/` — Pitch images
-- `/ProofOfConcept/` — Real Swift code (TrueDepth + Vision)
+- `Package.swift` — Swift Package manifest at root (library target sourcing ProofOfConcept)
+- `/ProofOfConcept/` — Real Swift implementation (TrueDepth + Vision)
 - `/web-demo/` — Interactive browser simulation
-- `/Sources/` — Swift Package
 
 **Status**: Prototype-ready. Ready for testing on device.
 

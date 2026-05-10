@@ -8,10 +8,6 @@ let package = Package(
         .library(
             name: "PrivacyGuard",
             targets: ["PrivacyGuard"]
-        ),
-        .executable(
-            name: "PrivacyGuardDemo",
-            targets: ["PrivacyGuardDemo"]
         )
     ],
     targets: [
@@ -19,11 +15,6 @@ let package = Package(
             name: "PrivacyGuard",
             dependencies: [],
             path: "ProofOfConcept"
-        ),
-        .executableTarget(
-            name: "PrivacyGuardDemo",
-            dependencies: ["PrivacyGuard"],
-            path: "ProofOfConcept/Demo"
         )
     ]
 )

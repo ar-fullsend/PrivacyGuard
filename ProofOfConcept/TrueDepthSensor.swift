@@ -1,6 +1,5 @@
 // TrueDepthSensor.swift
 import AVFoundation
-import UIKit
 
 class TrueDepthSensor {
     private var session: AVCaptureSession?

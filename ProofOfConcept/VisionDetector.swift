@@ -2,6 +2,7 @@
 // Uses Neural Engine for face counting
 
 import Vision
+import CoreVideo
 
 class VisionDetector {
     func detectFaces(in pixelBuffer: CVPixelBuffer, completion: @escaping (Int) -> Void) {
