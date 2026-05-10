@@ -2,31 +2,28 @@
 
 **Your screen. Yours alone.**
 
-A native iOS privacy layer for the age of public screens.
+A native iOS privacy layer using TrueDepth for the age of public screens.
 
-## Pitch to Apple
+## The Pitch
 
-![Privacy Guard Pitch](Assets/pitch-slide-1.png)
+Upload your 3 pitch screenshots to the `Assets/` folder.
 
-## The Problem
-- **73%** of professionals report shoulder-surfing
-- **1 in 4** data breaches involve visual credential exposure
-- **$4.9B** estimated annual loss from visual hacking
-
-## Solution
-**PrivacyGuard** uses existing TrueDepth sensor + Neural Engine for real-time, on-device privacy shielding.
+## Key Stats
+- **73%** of professionals report shoulder-surfing in transit, cafés, or shared workspaces.
+- **1 in 4** data breaches involve visual or in-person credential exposure.
+- **$4.9B** estimated annual loss from visual hacking.
 
 ## How it Works
-1. **Sense** — TrueDepth captures low-res frames
-2. **Detect** — Vision framework counts faces
-3. **Shield** — System dims/blocks screen instantly
-4. **Restore** — Screen returns when safe
+**Sense → Detect → Shield → Restore** — All on-device, real-time, invisible until it matters.
 
-## Repository Structure
-- `/Assets/` — Pitch deck images
-- `/ProofOfConcept/` — Swift implementation
-- `/web-demo/` — Browser simulation
+## Structure
+- `/Assets/` — Pitch images
+- `/ProofOfConcept/` — Swift + Vision + TrueDepth code
+- `/web-demo/` — Interactive HTML/JS simulation
 
-**Status**: Ready for development. Upload your pitch images to Assets/ and we can proceed with code.
+**Next Steps**
+1. Upload pitch images
+2. Rent Cloud Mac or get Mac access for Xcode
+3. Build prototype
 
-Built for iOS 19+.
+Repo bootstrapped per our conversation.
