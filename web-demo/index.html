@@ -3,57 +3,280 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PrivacyGuard Demo</title>
+    <title>PrivacyGuard - Live Demo</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; text-align: center; background: #000; color: #fff; padding: 40px 20px; margin: 0; }
-        h1 { color: #007AFF; }
-        .demo { max-width: 380px; margin: 30px auto; border: 12px solid #111; border-radius: 60px; overflow: hidden; box-shadow: 0 0 40px rgba(0,122,255,0.3); position: relative; }
-        .screen { height: 620px; background: linear-gradient(145deg, #1a1a1a, #0f0f0f); display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 500; transition: all 0.15s ease; position: relative; }
-        .shield { background: #000 !important; filter: brightness(0.1); }
-        .status { margin: 20px; padding: 12px; background: rgba(255,255,255,0.1); border-radius: 12px; min-height: 80px; }
-        button { padding: 14px 32px; margin: 8px; background: #007AFF; color: white; border: none; border-radius: 12px; font-size: 17px; font-weight: 600; cursor: pointer; }
-        button:hover { background: #0066CC; }
+        @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600&amp;display=swap');
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif; 
+            background: #000; 
+            color: #fff; 
+            margin: 0; 
+            padding: 20px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            min-height: 100vh;
+        }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { color: #007AFF; font-size: 42px; margin: 0; }
+        .header p { color: #888; margin: 8px 0 0; }
+        .phone-frame {
+            width: 380px;
+            height: 780px;
+            background: #111;
+            border-radius: 60px;
+            padding: 12px;
+            box-shadow: 0 0 60px rgba(0, 122, 255, 0.4), inset 0 0 20px rgba(255,255,255,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        .phone-frame::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 30px;
+            background: #000;
+            border-radius: 20px;
+            z-index: 10;
+        }
+        .screen {
+            width: 100%;
+            height: 100%;
+            background: #000;
+            border-radius: 48px;
+            overflow: hidden;
+            position: relative;
+        }
+        #camera {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            background: #1a1a1a;
+        }
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            transition: all 0.2s ease;
+        }
+        .shield-active {
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(20px);
+        }
+        .face-overlay {
+            position: absolute;
+            border: 3px solid #00FF9F;
+            border-radius: 50%;
+            pointer-events: none;
+            box-shadow: 0 0 20px #00FF9F;
+            transition: all 0.1s ease;
+        }
+        .warning { color: #FF3B30; font-weight: 600; }
+        .stats {
+            margin-top: 30px;
+            background: #111;
+            border-radius: 16px;
+            padding: 20px;
+            width: 380px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 12px 0;
+            font-size: 15px;
+        }
+        .stat-label { color: #888; }
+        .stat-value { color: #007AFF; font-weight: 600; }
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        button {
+            padding: 14px 28px;
+            background: #007AFF;
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        button:hover { background: #0055CC; transform: translateY(-1px); }
+        button.secondary { background: #333; }
+        button.secondary:hover { background: #444; }
+        .status-bar {
+            position: absolute;
+            top: 40px;
+            left: 0;
+            right: 0;
+            height: 30px;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            z-index: 5;
+            color: #0A0;
+        }
     </style>
 </head>
 <body>
-    <h1>PrivacyGuard</h1>
-    <p><strong>Your screen. Yours alone.</strong></p>
-    
-    <div class="demo">
-        <div id="screen" class="screen">
-            <div>Your Private Content</div>
+    <div class="header">
+        <h1>PrivacyGuard</h1>
+        <p><strong>Your screen. Yours alone.</strong> — Live Demo</p>
+    </div>
+
+    <div class="phone-frame">
+        <div class="screen">
+            <video id="camera" autoplay playsinline></video>
+            <div id="overlay" class="overlay"></div>
+            <div class="status-bar">🔒 PrivacyGuard Active</div>
+            <div id="face-indicators"></div>
         </div>
     </div>
 
-    <div class="status" id="status">Ready — One face detected</div>
+    <div class="stats">
+        <div class="stat-row"><span class="stat-label">Faces Detected</span> <span id="face-count" class="stat-value">1</span></div>
+        <div class="stat-row"><span class="stat-label">Response Time</span> <span id="latency" class="stat-value">&lt;120ms</span></div>
+        <div class="stat-row"><span class="stat-label">Shield Status</span> <span id="shield-status" class="stat-value" style="color:#0A0">Inactive</span></div>
+        <div class="stat-row"><span class="stat-label">Power Impact</span> <span id="power" class="stat-value">0.8%</span></div>
+    </div>
 
-    <button onclick="startDemo()">▶️ Start Simulation</button>
-    <button onclick="resetDemo()">Reset</button>
+    <div class="controls">
+        <button onclick="startCamera()">📷 Start Camera</button>
+        <button onclick="simulateSecondFace()">👥 Simulate Second Face</button>
+        <button onclick="resetDemo()" class="secondary">Reset</button>
+    </div>
 
     <script>
-        function startDemo() {
-            const screen = document.getElementById('screen');
-            const status = document.getElementById('status');
-            
-            status.innerHTML = '✅ Sensing with TrueDepth...';
-            
-            setTimeout(() => {
-                status.innerHTML = '⚠️ Second face detected! Shielding...';
-                screen.classList.add('shield');
-            }, 800);
-            
-            setTimeout(() => {
-                status.innerHTML = '✅ Second face left — Restoring screen';
-                screen.classList.remove('shield');
-            }, 3200);
-            
-            setTimeout(() => {
-                status.innerHTML = '✅ Back to private. PrivacyGuard active.';
-            }, 4200);
+        let videoStream = null;
+        let isShielded = false;
+        let faceCount = 1;
+        let secondFaceActive = false;
+
+        async function startCamera() {
+            try {
+                const video = document.getElementById('camera');
+                videoStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: 'user', width: 380, height: 620 } 
+                });
+                video.srcObject = videoStream;
+                updateStatus('✅ TrueDepth camera active — 1 face detected');
+                
+                // Simulate initial face detection overlay
+                addFaceOverlay(120, 180, 90);
+                
+                // Random face movement simulation
+                setInterval(() => {
+                    if (!secondFaceActive && Math.random() > 0.7) {
+                        moveFaceOverlays();
+                    }
+                }, 1500);
+            } catch (err) {
+                alert('Camera access required for full demo. Using simulated view.');
+                simulateCamera();
+            }
         }
-        
+
+        function simulateCamera() {
+            const video = document.getElementById('camera');
+            video.style.background = 'linear-gradient(45deg, #1a1a1a, #2a2a2a)';
+            video.poster = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iNjIwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMTExIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZpbGw9IiM2NjYiIGZvbnQtc2l6ZT0iMjQiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkNhbWVyYSBTaW11bGF0ZWQ8L3RleHQ+PC9zdmc+';
+            addFaceOverlay(140, 200, 85);
+        }
+
+        function addFaceOverlay(x, y, size) {
+            const container = document.getElementById('face-indicators');
+            const overlay = document.createElement('div');
+            overlay.className = 'face-overlay';
+            overlay.style.left = x + 'px';
+            overlay.style.top = y + 'px';
+            overlay.style.width = size + 'px';
+            overlay.style.height = size + 'px';
+            container.appendChild(overlay);
+            setTimeout(() => overlay.remove(), 4000);
+        }
+
+        function moveFaceOverlays() {
+            const container = document.getElementById('face-indicators');
+            container.innerHTML = '';
+            const x = 80 + Math.random() * 180;
+            const y = 120 + Math.random() * 300;
+            addFaceOverlay(x, y, 70 + Math.random() * 40);
+        }
+
+        function simulateSecondFace() {
+            const overlay = document.getElementById('overlay');
+            const status = document.getElementById('shield-status');
+            const faceCountEl = document.getElementById('face-count');
+            const latencyEl = document.getElementById('latency');
+
+            if (secondFaceActive) {
+                // Remove second face
+                secondFaceActive = false;
+                faceCount = 1;
+                faceCountEl.textContent = faceCount;
+                overlay.classList.remove('shield-active');
+                status.textContent = 'Inactive';
+                status.style.color = '#0A0';
+                updateStatus('✅ Second face left — Screen restored');
+                document.getElementById('face-indicators').innerHTML = '';
+                addFaceOverlay(120, 180, 90);
+                return;
+            }
+
+            // Add second face
+            secondFaceActive = true;
+            faceCount = 2;
+            faceCountEl.textContent = faceCount;
+            latencyEl.textContent = '87ms';
+            
+            updateStatus('⚠️ Second face detected — Shielding screen');
+            overlay.classList.add('shield-active');
+            status.textContent = 'ACTIVE';
+            status.style.color = '#FF3B30';
+
+            // Add second face indicator
+            addFaceOverlay(220, 280, 75);
+            
+            // Simulate shield animation
+            setTimeout(() => {
+                if (secondFaceActive) {
+                    updateStatus('🔒 Screen shielded — Privacy protected');
+                }
+            }, 600);
+        }
+
+        function updateStatus(msg) {
+            const statusEl = document.createElement('div');
+            statusEl.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#111;padding:10px 20px;border-radius:20px;font-size:14px;box-shadow:0 4px 15px rgba(0,0,0,0.5);z-index:100;';
+            statusEl.textContent = msg;
+            document.body.appendChild(statusEl);
+            setTimeout(() => statusEl.remove(), 2200);
+        }
+
         function resetDemo() {
             location.reload();
+        }
+
+        // Auto-start hint
+        window.onload = function() {
+            const hint = document.createElement('div');
+            hint.style.cssText = 'position:absolute;bottom:80px;left:50%;transform:translateX(-50%);color:#666;font-size:13px;';
+            hint.textContent = 'Tap Start Camera for live TrueDepth simulation';
+            document.body.appendChild(hint);
+            setTimeout(() => hint.remove(), 4500);
         }
     </script>
 </body>
