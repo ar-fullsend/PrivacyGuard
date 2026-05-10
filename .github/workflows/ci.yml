@@ -12,6 +12,12 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Build
-      run: swift build
+      run: |
+        swift build --target PrivacyGuard \
+          -Xswiftc "-target" -Xswiftc "arm64-apple-ios18.0-simulator" \
+          -Xswiftc "-sdk" -Xswiftc "$(xcrun --sdk iphonesimulator --show-sdk-path)"
     - name: Test
-      run: swift test
+      run: |
+        swift test --target PrivacyGuard \
+          -Xswiftc "-target" -Xswiftc "arm64-apple-ios18.0-simulator" \
+          -Xswiftc "-sdk" -Xswiftc "$(xcrun --sdk iphonesimulator --show-sdk-path)"

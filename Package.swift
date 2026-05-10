@@ -18,7 +18,8 @@ let package = Package(
         .target(
             name: "PrivacyGuard",
             dependencies: [],
-            path: "ProofOfConcept"
+            path: "ProofOfConcept",
+            exclude: ["README.md"]
         ),
         .executableTarget(
             name: "PrivacyGuardDemo",
