@@ -1,4 +1,9 @@
+# Xcode
 *.xcodeproj
 *.xcworkspace
 build/
+DerivedData/
+*.swiftpm
+
+# Web
 .DS_Store
