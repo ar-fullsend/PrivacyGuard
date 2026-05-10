@@ -49,12 +49,10 @@ class PrivacyGuardManager {
     }
     
     private func triggerShield() {
-        print("🛡️ Shield activated - Screen protected")
-        // TODO: Wire with ShieldOverlay.activate() for system-wide dim
+        ShieldOverlay.activate()
     }
     
     private func restoreScreen() {
-        print("✅ Screen restored")
-        // TODO: Wire with ShieldOverlay.deactivate() for restore
+        ShieldOverlay.deactivate()
     }
 }
