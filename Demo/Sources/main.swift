@@ -1,44 +1,21 @@
-// Demo/Sources/main.swift
-// Simple demo app for PrivacyGuard
-
+import Foundation
 import PrivacyGuard
 
-import SwiftUI
+print("PrivacyGuard iOS Demo - Real-time face detection")
+print("This is a command-line demonstration of the core library.")
+print("For full iOS app with camera preview, open the package in Xcode and add a SwiftUI target.")
 
-@main
-struct PrivacyGuardDemoApp: App {
-    var body: some Scene {
-        WindowGroup {
-            ContentView()
-        }
-    }
+let manager = PrivacyGuardManager.shared
+
+print("\nStarting monitoring (simulated on non-iOS)...")
+manager.startMonitoring()
+
+// Simulate for demo
+DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+    print("Simulating second face detected - Shield would activate here on real device.")
+    manager.stopMonitoring()
+    print("Demo complete. In real iOS app this runs with TrueDepth camera.")
+    exit(0)
 }
 
-struct ContentView: View {
-    @State private var isMonitoring = false
-    
-    var body: some View {
-        VStack(spacing: 20) {
-            Text("PrivacyGuard Demo")
-                .font(.largeTitle)
-            
-            Text("TrueDepth Face Detection Shield")
-                .font(.headline)
-            
-            Button(isMonitoring ? "Stop Monitoring" : "Start Monitoring") {
-                if isMonitoring {
-                    PrivacyGuardManager.shared.stopMonitoring()
-                    isMonitoring = false
-                } else {
-                    PrivacyGuardManager.shared.startMonitoring()
-                    isMonitoring = true
-                }
-            }
-            .buttonStyle(.borderedProminent)
-            
-            Text("Shield activates on second face detection")
-                .font(.caption)
-        }
-        .padding()
-    }
-}
+RunLoop.main.run()
